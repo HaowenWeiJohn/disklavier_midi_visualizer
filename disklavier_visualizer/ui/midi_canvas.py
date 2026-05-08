@@ -115,6 +115,7 @@ class MidiCanvasWidget(QWidget):
         self._time_resolution = adapter.time_resolution
         self._note_data = NoteData()
         self._note_data.load_from_adapter(adapter)
+        self._seconds_per_viewport = 5.0  # reset to default on each load
         # Auto-seek to first note's start (matches reference behavior)
         if self._note_data.starts:
             self._current_time = self._note_data.starts[0]
