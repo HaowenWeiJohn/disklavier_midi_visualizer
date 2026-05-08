@@ -1,0 +1,1839 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Disklavier MIDI Visualizer — a falling-keys piano-roll inspector with anchor annotations.">
+      
+      
+      
+        <link rel="canonical" href="https://haowenweijohn.github.io/disklavier_midi_visualizer/3-reference/midi-canvas/">
+      
+      
+        <link rel="prev" href="../main-window/">
+      
+      
+        <link rel="next" href="../timeline-slider/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>MIDI canvas - Disklavier MIDI Visualizer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#midi-canvas" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Disklavier MIDI Visualizer" class="md-header__button md-logo" aria-label="Disklavier MIDI Visualizer" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Disklavier MIDI Visualizer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              MIDI canvas
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/HaowenWeiJohn/disklavier_midi_visualizer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HaowenWeiJohn/disklavier_midi_visualizer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../1-overview/what-it-is/" class="md-tabs__link">
+          
+  
+  
+  1. Overview
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../2-getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  2. Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../main-window/" class="md-tabs__link">
+          
+  
+  
+  3. Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../4-project-files/saving-and-loading/" class="md-tabs__link">
+          
+  
+  
+  4. Project files
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../5-troubleshooting/known-issues/" class="md-tabs__link">
+          
+  
+  
+  5. Troubleshooting
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Disklavier MIDI Visualizer" class="md-nav__button md-logo" aria-label="Disklavier MIDI Visualizer" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Disklavier MIDI Visualizer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/HaowenWeiJohn/disklavier_midi_visualizer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HaowenWeiJohn/disklavier_midi_visualizer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. Overview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    1. Overview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-overview/what-it-is/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What it is
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../1-overview/scope-and-non-goals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scope and non-goals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2. Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    2. Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2-getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2-getting-started/first-launch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    First launch
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3. Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3. Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../main-window/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main window
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIDI canvas
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIDI canvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#note-colouring-velocity-colormap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Note colouring (velocity colormap)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-axis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time axis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pitch-axis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitch axis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auto-seek-on-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-seek on load
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visibility-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visibility window
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interactions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#drag-scrub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drag (scrub)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wheel-zoom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wheel (zoom)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#double-click-a-note" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Double-click a note
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hover
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arrow-key-stepping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arrow-key stepping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keyboard-strip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keyboard strip
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#empty-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Empty-state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#info-label-panel-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Info label (panel container)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-api-signals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API (signals)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-api-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API (methods)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../timeline-slider/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Timeline slider
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anchor-table/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anchor table
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../keyboard-shortcuts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keyboard shortcuts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4. Project files
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4. Project files
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4-project-files/saving-and-loading/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Saving and loading anchors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../4-project-files/json-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JSON schema (v1)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5. Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    5. Troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../5-troubleshooting/known-issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Known issues
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../5-troubleshooting/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#note-colouring-velocity-colormap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Note colouring (velocity colormap)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-axis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time axis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pitch-axis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pitch axis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auto-seek-on-load" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-seek on load
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visibility-window" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visibility window
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interactions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#drag-scrub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drag (scrub)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wheel-zoom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wheel (zoom)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#double-click-a-note" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Double-click a note
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hover
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arrow-key-stepping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arrow-key stepping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keyboard-strip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keyboard strip
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#empty-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Empty-state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#info-label-panel-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Info label (panel container)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-api-signals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API (signals)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-api-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public API (methods)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="midi-canvas">MIDI canvas<a class="headerlink" href="#midi-canvas" title="Permanent link">&para;</a></h1>
+<p>The MIDI canvas is the falling-keys piano roll at the centre of the main window. Notes scroll from the top of the canvas (future) toward a horizontal red playhead near the bottom (now), and a fixed 88-key piano keyboard is drawn below the falling notes.</p>
+<p>The canvas is implemented as <code>MidiCanvasWidget</code> in <code>disklavier_visualizer/ui/midi_canvas.py:87</code>, wrapped by a thin container <code>MidiPanelWidget</code> (<code>midi_canvas.py:356</code>) that adds an info label below the canvas. The main window holds the <code>MidiPanelWidget</code>; the canvas itself is exposed via the <code>panel.canvas</code> property.</p>
+<h2 id="coverage">Coverage<a class="headerlink" href="#coverage" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Pitch range: <strong>MIDI 21 (A0) to 108 (C8)</strong> — the full 88-key piano (<code>MIN_PITCH = 21</code>, <code>MAX_PITCH = 108</code>).</li>
+<li>Notes outside that range are silently skipped during paint.</li>
+<li>Keyboard strip: <strong>40 px tall</strong> at the bottom of the canvas (<code>PIANO_HEIGHT = 40</code>).</li>
+<li>Playhead line sits at <strong>97 %</strong> of the canvas height (just above the keyboard, <code>_playhead_frac = 0.97</code>).</li>
+<li>Source: only <code>pretty_midi.PrettyMIDI(filepath).instruments[0].notes</code> (the first track). Other tracks are ignored.</li>
+</ul>
+<h2 id="note-colouring-velocity-colormap">Note colouring (velocity colormap)<a class="headerlink" href="#note-colouring-velocity-colormap" title="Permanent link">&para;</a></h2>
+<p>Notes are coloured by their MIDI velocity, interpolated linearly across four anchor stops:</p>
+<table>
+<thead>
+<tr>
+<th>Velocity</th>
+<th>Colour</th>
+<th>RGB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>soft blue</td>
+<td><code>(60, 100, 200)</code></td>
+</tr>
+<tr>
+<td>64</td>
+<td>green</td>
+<td><code>(60, 200, 100)</code></td>
+</tr>
+<tr>
+<td>100</td>
+<td>yellow</td>
+<td><code>(255, 200, 50)</code></td>
+</tr>
+<tr>
+<td>127</td>
+<td>loud red</td>
+<td><code>(255, 60, 60)</code></td>
+</tr>
+</tbody>
+</table>
+<p>The interpolation is piecewise-linear in RGB space (<code>_velocity_color</code> in <code>midi_canvas.py:42</code>). A velocity of <code>82</code> falls in the <code>64 → 100</code> segment and gets <code>(t = 18/36 = 0.5)</code> between green and yellow.</p>
+<p>The note is drawn as a filled rectangle with a slightly darker outline (<code>color.darker(130)</code>). When a note is <strong>hovered</strong>, the outline switches to a 2 px white border instead.</p>
+<h2 id="time-axis">Time axis<a class="headerlink" href="#time-axis" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Notes fall from top (future) to bottom (past); the playhead is at <code>97 %</code> from the top.</li>
+<li>
+<p><strong>Grid lines</strong> are drawn every <strong>0.5 s</strong> by default. At wider zooms the interval widens:</p>
+<table>
+<thead>
+<tr>
+<th>Viewport (<code>_seconds_per_viewport</code>)</th>
+<th>Grid interval</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>≤ 10 s</td>
+<td>0.5 s</td>
+</tr>
+<tr>
+<td>10–20 s</td>
+<td>1 s</td>
+</tr>
+<tr>
+<td>&gt; 20 s</td>
+<td>2 s</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Tick labels (e.g. <code>12.5s</code>) are drawn 2 px in from the left edge of each grid line, rendered in 7-pt monospace.</p>
+</li>
+</ul>
+<p>The math behind the y-axis (<code>_time_to_y</code>):</p>
+<div class="highlight"><pre><span></span><code>canvas_height = self.height() - PIANO_HEIGHT
+playhead_y    = canvas_height * 0.97
+pixels_per_s  = canvas_height / seconds_per_viewport
+y(t)          = playhead_y - (t - current_time) * pixels_per_s
+</code></pre></div>
+<p>A note at the playhead time has its bottom at <code>playhead_y</code>; future notes are higher up; past notes have already scrolled off below the playhead.</p>
+<h2 id="pitch-axis">Pitch axis<a class="headerlink" href="#pitch-axis" title="Permanent link">&para;</a></h2>
+<p>Each pitch occupies a fixed-width vertical column:</p>
+<div class="highlight"><pre><span></span><code>key_width = canvas_width / 88
+x(pitch)  = (pitch - MIN_PITCH) * key_width
+</code></pre></div>
+<p>Octave separators (vertical lines at every C, faint colour <code>(50, 50, 55)</code>) are drawn full-height of the falling-notes area for easier orientation.</p>
+<h2 id="auto-seek-on-load">Auto-seek on load<a class="headerlink" href="#auto-seek-on-load" title="Permanent link">&para;</a></h2>
+<p>When <code>load_midi(adapter)</code> is called:</p>
+<ol>
+<li>The note list is rebuilt from <code>adapter.notes</code>, sorted by start time, into four parallel arrays (<code>starts</code>, <code>ends</code>, <code>pitches</code>, <code>velocities</code>) inside a <code>NoteData</code> helper.</li>
+<li>The viewport is reset to <strong>5 s</strong> regardless of any prior zoom.</li>
+<li>The playhead <strong>auto-seeks to the first note's start time</strong> (or 0.0 if the file has no notes). This matches the reference project's behaviour and prevents staring at empty space at the top of files with leading silence.</li>
+<li><code>position_changed</code> is emitted so the slider sees the new position.</li>
+</ol>
+<h2 id="visibility-window">Visibility window<a class="headerlink" href="#visibility-window" title="Permanent link">&para;</a></h2>
+<p>For each repaint the canvas computes <code>[t_bottom, t_top]</code> (the time range visible on screen) and asks <code>NoteData.visible_range</code> for the index range of notes intersecting that window. The implementation uses <code>bisect</code> on the sorted <code>starts</code> array, then walks back to catch notes that started before <code>t_bottom</code> but extend into the window:</p>
+<div class="highlight"><pre><span></span><code><span class="n">i_start</span> <span class="o">=</span> <span class="n">bisect</span><span class="o">.</span><span class="n">bisect_left</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="n">t_min</span><span class="p">)</span>
+<span class="k">while</span> <span class="n">i_start</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ends</span><span class="p">[</span><span class="n">i_start</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">t_min</span><span class="p">:</span>
+    <span class="n">i_start</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="n">i_end</span> <span class="o">=</span> <span class="n">bisect</span><span class="o">.</span><span class="n">bisect_right</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starts</span><span class="p">,</span> <span class="n">t_max</span><span class="p">)</span>
+<span class="k">return</span> <span class="nb">range</span><span class="p">(</span><span class="n">i_start</span><span class="p">,</span> <span class="n">i_end</span><span class="p">)</span>
+</code></pre></div>
+<p>This means <strong>rendering cost scales with the visible note count, not the total file size</strong> — even very long Disklavier recordings repaint instantly.</p>
+<h2 id="interactions">Interactions<a class="headerlink" href="#interactions" title="Permanent link">&para;</a></h2>
+<h3 id="drag-scrub">Drag (scrub)<a class="headerlink" href="#drag-scrub" title="Permanent link">&para;</a></h3>
+<p>Left-mouse press on the canvas captures a drag-start <code>(y, current_time)</code> snapshot. Subsequent <code>mouseMoveEvent</code>s while held update the playhead by <code>dt = dy / pixels_per_second</code>, where <code>dy</code> is the delta from the press position.</p>
+<ul>
+<li>Dragging <strong>down</strong> moves forward in time (notes fall, playhead advances).</li>
+<li>Dragging <strong>up</strong> moves backward.</li>
+<li>Drag speed scales naturally with zoom because <code>pixels_per_second</code> is recomputed every move.</li>
+</ul>
+<p>The press emits <code>user_interacted</code>; the move emits <code>position_changed</code> via <code>set_position</code>.</p>
+<h3 id="wheel-zoom">Wheel (zoom)<a class="headerlink" href="#wheel-zoom" title="Permanent link">&para;</a></h3>
+<p><code>wheelEvent</code> reads <code>event.angleDelta().y()</code>:</p>
+<ul>
+<li>Wheel up (positive delta) → factor <code>0.8</code> (zoom in — fewer seconds visible).</li>
+<li>Wheel down (negative delta) → factor <code>1.25</code> (zoom out — more seconds visible).</li>
+<li>Clamped to <strong><code>[0.5, 60.0]</code></strong> seconds-per-viewport.</li>
+</ul>
+<p>Zooming emits <code>user_interacted</code> but <strong>not</strong> <code>position_changed</code> — the playhead time doesn't change, only the visible window around it.</p>
+<p>The slider is unaffected by zoom; its range stays at <code>0 .. duration_ms</code> regardless of the canvas's current viewport.</p>
+<h3 id="double-click-a-note">Double-click a note<a class="headerlink" href="#double-click-a-note" title="Permanent link">&para;</a></h3>
+<p>Left-double-click on a visible note snaps the playhead to that note's <strong>start</strong> time. The implementation cancels any in-progress drag from the preceding press first (<code>self._dragging = False</code>) so a tiny pixel jitter between press and double-click can't yank the playhead back via <code>mouseMoveEvent</code>.</p>
+<p>Double-click on empty space (no note under the cursor) is a no-op — the event passes through to <code>super().mouseDoubleClickEvent</code>.</p>
+<p>The hit-test (<code>_note_index_at</code>) iterates <code>visible_range</code> in reverse so the <strong>topmost</strong> visible note at the click point wins (matching what's drawn on top).</p>
+<h3 id="hover">Hover<a class="headerlink" href="#hover" title="Permanent link">&para;</a></h3>
+<p>Mouse motion over a note (with no button held) updates <code>_hover_index</code> and triggers a repaint so the hovered note gets its 2 px white outline. Moving off the canvas (<code>leaveEvent</code>) clears the hover.</p>
+<p>Hover is purely visual feedback — there is no tooltip with note metadata.</p>
+<h2 id="arrow-key-stepping">Arrow-key stepping<a class="headerlink" href="#arrow-key-stepping" title="Permanent link">&para;</a></h2>
+<p>The canvas does not register the arrow-key shortcuts itself; the <strong>main window</strong> does (see <a href="../main-window/#keyboard-shortcuts">Main window → Keyboard shortcuts</a>). When fired, they call <code>MidiPanelWidget.step_ticks(±1)</code> or <code>step_ticks(±100)</code>, which delegates to <code>self._canvas.step_ticks</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">step_ticks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticks</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_time</span> <span class="o">+</span> <span class="n">ticks</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_resolution</span><span class="p">)</span>
+</code></pre></div>
+<p><code>time_resolution</code> is <code>seconds_per_tick</code> derived from the file's tempo and ticks-per-beat. For a 120 BPM file at 480 ticks/beat, one tick is <code>60/120/480 ≈ 1.04 ms</code>. For Disklavier-typical 1920 ticks/beat, ticks are quarter-millisecond — only visible at very high zoom.</p>
+<p><code>set_position</code> clamps to <code>[0, duration]</code>, so the arrow keys don't drag past the file boundaries.</p>
+<h2 id="keyboard-strip">Keyboard strip<a class="headerlink" href="#keyboard-strip" title="Permanent link">&para;</a></h2>
+<p>Drawn by <code>_draw_piano(painter, y_offset)</code>:</p>
+<ul>
+<li>White keys first, as full-height (<code>PIANO_HEIGHT = 40</code>) light rectangles with faint grey outlines.</li>
+<li>Black keys on top, narrower (70 % of <code>key_width</code>) and shorter (65 % of <code>PIANO_HEIGHT</code>), in a near-black fill with no outline.</li>
+<li>C-octave labels (<code>C1</code>, <code>C2</code>, …, <code>C8</code>) drawn in 6-pt sans-serif at each C key in the lower-right area of the keyboard strip.</li>
+</ul>
+<p>The keyboard is purely <strong>informational</strong> — clicking on it does nothing (there is no <code>mousePressEvent</code> distinction between the falling-notes area and the keyboard strip; clicks below the playhead simply have a different y-to-time mapping).</p>
+<h2 id="empty-state">Empty-state<a class="headerlink" href="#empty-state" title="Permanent link">&para;</a></h2>
+<p>Before any MIDI is loaded (<code>self._adapter is None</code>):</p>
+<ul>
+<li>The whole canvas is filled with the background colour (<code>(30, 30, 35)</code>).</li>
+<li>Centred white text reads <code>No MIDI loaded</code>.</li>
+<li>The info label below reads <code>No MIDI loaded</code>.</li>
+</ul>
+<h2 id="info-label-panel-container">Info label (panel container)<a class="headerlink" href="#info-label-panel-container" title="Permanent link">&para;</a></h2>
+<p>The <code>MidiPanelWidget</code> adds a centred <code>QLabel</code> below the canvas that updates every time the playhead moves:</p>
+<div class="highlight"><pre><span></span><code>Time: 192.847s / 261.5s  |  Tick: 370266
+</code></pre></div>
+<ul>
+<li><code>Time</code> is the current playhead in seconds, then the file duration in seconds.</li>
+<li><code>Tick</code> is the current playhead expressed in MIDI ticks (<code>int(current_time * sample_rate)</code>), where <code>sample_rate = 1 / time_resolution</code>.</li>
+</ul>
+<p>When no MIDI is loaded, the label reads <code>No MIDI loaded</code>.</p>
+<h2 id="public-api-signals">Public API (signals)<a class="headerlink" href="#public-api-signals" title="Permanent link">&para;</a></h2>
+<p>Both the panel and the canvas expose the same signals — the panel just forwards.</p>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>position_changed(float)</code></td>
+<td>Whenever the playhead moves (drag, arrow keys, double-click, programmatic <code>set_position</code>).</td>
+</tr>
+<tr>
+<td><code>user_interacted()</code></td>
+<td>Direct user input only — left-mouse press or wheel. <strong>Not</strong> emitted on programmatic updates from the slider or anchor table.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-api-methods">Public API (methods)<a class="headerlink" href="#public-api-methods" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>load_midi(adapter: MidiAdapter)</code></td>
+<td>Replace the displayed MIDI. Resets viewport to 5 s and auto-seeks to the first note.</td>
+</tr>
+<tr>
+<td><code>set_position(time_seconds: float)</code></td>
+<td>Move the playhead. Clamps to <code>[0, duration]</code>. Suppresses re-emit if the time is unchanged.</td>
+</tr>
+<tr>
+<td><code>step_ticks(ticks: int)</code></td>
+<td>Step by <code>ticks * time_resolution</code> seconds.</td>
+</tr>
+<tr>
+<td><code>current_time</code> (property, panel)</td>
+<td>Read-only float, current playhead in seconds.</td>
+</tr>
+<tr>
+<td><code>canvas</code> (property, panel)</td>
+<td>The underlying <code>MidiCanvasWidget</code>.</td>
+</tr>
+<tr>
+<td><code>canvas.adapter</code> (property)</td>
+<td>The current <code>MidiAdapter</code> or <code>None</code>. Used by the main window to gate "save anchors" / "add anchor" actions.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
