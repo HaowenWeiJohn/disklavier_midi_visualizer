@@ -1,6 +1,8 @@
 # Disklavier MIDI Visualizer
 
-A small PyQt5 desktop app for inspecting Disklavier MIDI recordings as a falling-keys piano roll. Pick a `.mid` file, scrub through it, zoom in or out, see notes colored by velocity. Pure visualization — no audio playback, no annotations, no alignment.
+A small PyQt5 desktop app for inspecting Disklavier MIDI recordings as a falling-keys piano roll. Pick a `.mid` file, scrub through it, zoom in or out, mark moments of interest as **anchors**, and save the anchor list as a JSON sidecar. Pure visualization — no audio playback, no MIDI editing.
+
+![Main window](docs/assets/images/gui.png)
 
 ## Install
 
@@ -22,34 +24,43 @@ pip install -r requirements-dev.txt
 python -m disklavier_visualizer
 ```
 
-Then `File > Open...` (or `Ctrl+O`) to pick a `.mid` file.
+Then **File → Open…** (or ++Ctrl+O++) to pick a `.mid` file (or a saved `.anchors.json` to restore a session).
 
-## Interactions
+## Documentation
 
-| Action                     | Effect                                                |
-|----------------------------|-------------------------------------------------------|
-| Drag canvas (left mouse)   | Scrub the playhead through time                       |
-| Scroll wheel on canvas     | Zoom in/out (0.5s–60s viewport)                       |
-| Double-click a note        | Jump the playhead to that note's start                |
-| Drag the timeline slider   | Scrub like a video player                             |
-| Click on the slider trough | Jump to that position                                 |
-| `Left` / `Right`           | Step the playhead by ±1 MIDI tick                     |
-| `Shift+Left` / `Shift+Right` | Step by ±100 ticks                                  |
-| `Ctrl+O`                   | Open a MIDI file                                      |
-| `Ctrl+Q`                   | Quit                                                  |
+**📖 [Read the docs](https://haowenweijohn.github.io/disklavier_midi_visualizer/)**
 
-Notes are colored by MIDI velocity:
+To build and serve the docs locally:
 
-- Soft (vel ~0–63): blue → green
-- Medium (vel ~64–99): green → yellow
-- Loud (vel ~100–127): yellow → red
+```powershell
+pip install -r requirements-docs.txt
+mkdocs serve
+```
 
-## Limitations
+Open [http://localhost:8000](http://localhost:8000) to browse. The docs are organised into:
 
-- Reads only the first track (`pretty_midi.instruments[0]`). Disklavier exports are single-track piano, so this is the right default.
-- No audio playback. Scrubbing is visual-only.
-- No persistence between sessions (no recent-files list, no last-opened memory).
-- No annotations, anchors, or alignment features.
+- **§1 Overview** — what the tool is and what it deliberately doesn't do.
+- **§2 Getting started** — installation and a five-minute first-launch walkthrough.
+- **§3 Reference** — per-component pages for the main window, MIDI canvas, timeline slider, anchor table, and a keyboard shortcuts cheat sheet.
+- **§4 Project files** — the anchor save/load workflow and the JSON v1 schema.
+- **§5 Troubleshooting** — known issues and FAQ.
+
+## Tests
+
+```powershell
+pytest
+```
+
+Test coverage:
+
+- `tests/test_midi_adapter.py` — MIDI parsing, error handling.
+- `tests/test_anchor_io.py` — JSON round-trip, sort-on-save, schema rejection.
+- `tests/test_anchor_table.py` — Anchor widget add/sort/delete/jump/label edit/signals.
+- `tests/test_note_data.py` — Visibility-range logic.
+- `tests/test_velocity_color.py` — Colormap stops and interpolation.
+- `tests/test_smoke.py` — End-to-end MainWindow wiring (requires `pytest-qt`).
+
+For manual UI verification, see [`docs/manual_test.md`](docs/manual_test.md).
 
 ## Project layout
 
@@ -58,26 +69,13 @@ disklavier_visualizer/
 ├── app.py             — QApplication bootstrap
 ├── __main__.py        — `python -m disklavier_visualizer` entry point
 ├── io/
-│   └── midi_adapter.py    — mido + pretty_midi MIDI parser
+│   ├── midi_adapter.py    — mido + pretty_midi MIDI parser
+│   └── anchor_io.py       — anchor JSON sidecar save/load (schema v1)
 └── ui/
-    ├── main_window.py     — QMainWindow shell, menu, signal wiring
+    ├── main_window.py     — QMainWindow shell, menu, file dispatch, signal wiring
     ├── midi_canvas.py     — falling-keys QPainter visualization
-    └── timeline_slider.py — scrubber bar at the bottom
+    ├── timeline_slider.py — bottom scrubber, click-to-jump
+    └── anchor_table.py    — dockable anchor list (#, Time(s), Label)
 ```
 
-The visualization (`midi_canvas.py`) and MIDI parser (`midi_adapter.py`) are adapted from the
-`midi_camera_alignment_tool` project.
-
-## Tests
-
-```powershell
-pytest
-```
-
-Test layout:
-- `tests/test_midi_adapter.py` — MIDI parsing, error handling
-- `tests/test_note_data.py` — visibility-range logic
-- `tests/test_velocity_color.py` — colormap stops and interpolation
-- `tests/test_smoke.py` — end-to-end MainWindow wiring (requires `pytest-qt`)
-
-For manual UI verification, see `docs/manual_test.md`.
+The MIDI parser, falling-keys canvas, and anchor table are adapted from the sibling [`midi_camera_alignment_tool`](https://github.com/HaowenWeiJohn/midi_camera_alignment_tool) project, trimmed for a standalone visualizer.

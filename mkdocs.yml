@@ -1,0 +1,70 @@
+site_name: Disklavier MIDI Visualizer
+site_description: Documentation for the Disklavier MIDI Visualizer — a falling-keys piano-roll inspector with anchor annotations.
+site_url: https://haowenweijohn.github.io/disklavier_midi_visualizer/
+repo_url: https://github.com/HaowenWeiJohn/disklavier_midi_visualizer
+repo_name: HaowenWeiJohn/disklavier_midi_visualizer
+edit_uri: edit/main/docs/
+
+exclude_docs: |
+  superpowers/
+  manual_test.md
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - 1. Overview:
+      - What it is: 1-overview/what-it-is.md
+      - Scope and non-goals: 1-overview/scope-and-non-goals.md
+  - 2. Getting started:
+      - Installation: 2-getting-started/installation.md
+      - First launch: 2-getting-started/first-launch.md
+  - 3. Reference:
+      - Main window: 3-reference/main-window.md
+      - MIDI canvas: 3-reference/midi-canvas.md
+      - Timeline slider: 3-reference/timeline-slider.md
+      - Anchor table: 3-reference/anchor-table.md
+      - Keyboard shortcuts: 3-reference/keyboard-shortcuts.md
+  - 4. Project files:
+      - Saving and loading anchors: 4-project-files/saving-and-loading.md
+      - JSON schema (v1): 4-project-files/json-schema.md
+  - 5. Troubleshooting:
+      - Known issues: 5-troubleshooting/known-issues.md
+      - FAQ: 5-troubleshooting/faq.md
