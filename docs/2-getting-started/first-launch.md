@@ -86,7 +86,13 @@ If the loaded MIDI's duration differs from the value stored at save time by more
 
 ## Quit
 
-++ctrl+q++ closes the window. There is no "save before quit" prompt — anchors that haven't been saved are lost. If you want to keep them, save first.
+++ctrl+q++ (or the window's **X** button) closes the window. If you have unsaved anchor edits — the title bar shows a `*` marker — a **Save / Discard / Cancel** prompt appears first:
+
+- **Save** opens the save dialog; succeeding closes the window, cancelling the dialog keeps it open.
+- **Discard** closes the window and loses the edits.
+- **Cancel** keeps the window open with edits intact.
+
+If there are no unsaved edits, the window closes immediately. See [§3.1 Main window → Unsaved changes guard](../3-reference/main-window.md#unsaved-changes-guard) for the full flow.
 
 ## Where to next
 

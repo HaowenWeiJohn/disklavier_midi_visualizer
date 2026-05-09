@@ -2,12 +2,6 @@
 
 This page lists known limitations, behaviours that surprised early users, and things that aren't bugs but are worth being aware of. For an explicit list of features that are intentionally absent, see [§1.2 Scope and non-goals](../1-overview/scope-and-non-goals.md).
 
-## Anchors are not saved automatically
-
-Adding, deleting, or editing anchors in the dock does **not** mark the session dirty in any visible way (no asterisk in the title bar, no prompt before quitting). Closing the window with ++ctrl+q++ or the X button discards unsaved anchors silently. Press ++ctrl+s++ before quitting if you want to keep them.
-
-This is intentional — the app is single-purpose and lightweight, and a save-or-lose prompt was deemed more friction than value. If you find yourself losing work, treat ++ctrl+s++ as a habit after every batch of anchors.
-
 ## Closing the anchor dock has no menu-item to reopen
 
 The dock's title bar has a small `[X]` button that hides it. There is currently no **View** menu item or shortcut to bring it back. The workaround is to **restart the app** — every launch re-creates the dock in the right-side area regardless of how the previous session left it.

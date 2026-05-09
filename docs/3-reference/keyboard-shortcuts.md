@@ -10,7 +10,7 @@ These work regardless of which child widget has focus. Registered through `QActi
 |---|---|
 | ++ctrl+o++ | Open… (`*.mid`, `*.MID`, `*.json` — the `.json` path loads anchors and their referenced MIDI) |
 | ++ctrl+s++ | Save Anchors… (disabled until a MIDI is loaded) |
-| ++ctrl+q++ | Quit (no "save first" prompt — unsaved anchors are discarded) |
+| ++ctrl+q++ | Quit (prompts **Save / Discard / Cancel** if there are unsaved anchor edits — see [Main window → Unsaved changes guard](main-window.md#unsaved-changes-guard)) |
 
 ## Window shortcuts
 

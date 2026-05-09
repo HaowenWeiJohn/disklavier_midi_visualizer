@@ -34,14 +34,15 @@ The central widget is a `QVBoxLayout` containing the `MidiPanelWidget` (stretch=
 
 ## Title bar
 
-Two states only:
+Three states:
 
 | Title | Meaning |
 |---|---|
 | `Disklavier MIDI Visualizer` | No MIDI loaded |
-| `{filename} — Disklavier MIDI Visualizer` | MIDI loaded |
+| `{filename} — Disklavier MIDI Visualizer` | MIDI loaded; no unsaved anchor edits |
+| `{filename}* — Disklavier MIDI Visualizer` | MIDI loaded; anchors edited since the last save / load |
 
-There is **no dirty marker** for unsaved anchors. Closing the window with unsaved anchors discards them silently — the user is responsible for pressing ++ctrl+s++ before quitting.
+The trailing `*` is the **dirty marker**. See [Unsaved changes guard](#unsaved-changes-guard) for what triggers it and what protections it enables.
 
 ## Status bar
 
@@ -71,7 +72,7 @@ Single top-level menu, no toolbar.
 |---|---|---|
 | **Open…** | ++ctrl+o++ | File picker for `*.mid`, `*.MID`, or `*.json`. Dispatch by extension: `.json` → [load anchors](../4-project-files/saving-and-loading.md#loading-anchors); anything else → load MIDI. |
 | **Save Anchors…** | ++ctrl+s++ | File picker for `*.json`. Disabled until a MIDI is loaded. Default name is `{midi-stem}.anchors.json` in the MIDI's folder. Atomic write via tempfile + `os.replace`. |
-| **Quit** | ++ctrl+q++ | Closes the window. **Does not** prompt to save unsaved anchors. |
+| **Quit** | ++ctrl+q++ | Closes the window. If there are unsaved anchor edits, prompts **Save / Discard / Cancel** first — see [Unsaved changes guard](#unsaved-changes-guard). |
 
 ## File dispatch
 
@@ -100,6 +101,38 @@ When the picked file is a `.json`, `_open_anchors` runs (`disklavier_visualizer/
 6. Replace the table contents with the clamped anchors and update the status bar.
 
 See [§4.1 Saving and loading anchors](../4-project-files/saving-and-loading.md) for the full workflow including edge cases.
+
+## Unsaved changes guard
+
+The main window tracks whether the in-memory anchor list differs from the last save (or last fresh load) via a `_dirty` boolean (`disklavier_visualizer/ui/main_window.py:68`). The flag is the source of truth for both the title-bar `*` marker and a confirmation prompt that fires before any action that would lose the edits.
+
+### When the flag flips
+
+| Event | New `_dirty` | Where |
+|---|---|---|
+| Add anchor (++a++ or **Add Anchor**) | `True` | `_on_anchors_changed` ← `AnchorTableWidget.anchors_changed` |
+| Delete anchor | `True` | same signal |
+| Edit a label to a new value | `True` | same signal |
+| ++ctrl+s++ save succeeds | `False` | `_mark_clean()` at the end of `_on_save_anchors` |
+| `File → Open…` loads a MIDI | `False` | `_mark_clean()` at the end of `_open_midi` |
+| `File → Open…` loads an anchor JSON | `False` | `_mark_clean()` at the end of `_open_anchors` |
+
+Loads call `_anchor_table.clear()` / `set_anchors(...)` first, both of which themselves emit `anchors_changed` (and would set `_dirty=True`). The `_mark_clean()` call deliberately runs *after* the mutation to settle the flag back to `False`.
+
+### Save / Discard / Cancel prompt
+
+`_maybe_confirm_discard()` (`disklavier_visualizer/ui/main_window.py:145`) is invoked from two call sites that would otherwise lose anchors:
+
+- `_on_open_file` — before showing the file picker. Cancelling aborts the open.
+- `closeEvent` — before accepting the close. Cancelling keeps the window alive.
+
+When `_dirty` is `True`, a `QMessageBox.question` with three buttons appears:
+
+- **Save** — chains into `_on_save_anchors`. The save dialog appears; if the user picks a path and the write succeeds, the original action proceeds. If the user cancels the save dialog or the write raises `OSError`, the original action is **aborted** (treated as Cancel) — anchors are preserved rather than silently discarded.
+- **Discard** — proceed without saving. The unsaved edits are lost.
+- **Cancel** — abort. The window stays open / the file picker never appears.
+
+If `_dirty` is `False`, the prompt is skipped and the action proceeds immediately.
 
 ## Two-way bind: canvas ↔ slider
 

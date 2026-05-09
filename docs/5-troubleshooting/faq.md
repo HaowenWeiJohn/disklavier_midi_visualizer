@@ -34,6 +34,20 @@ To start at zero anyway, drag the slider thumb to the left edge or click the lef
 
 By design — `load_midi` resets `_seconds_per_viewport` to 5.0 on every load. The thinking is that "5 seconds visible" is a reasonable default for spotting note shapes, and if you had previously zoomed in for the prior file, that zoom level isn't necessarily appropriate for the new one.
 
+## What does the `*` in the title bar mean?
+
+It marks **unsaved anchor edits**. The title shows `{filename}* — Disklavier MIDI Visualizer` as soon as you add, delete, or rename an anchor, and reverts to `{filename} — Disklavier MIDI Visualizer` (no star) after a successful ++ctrl+s++ save or any fresh load. See [§3.1 Main window → Unsaved changes guard](../3-reference/main-window.md#unsaved-changes-guard).
+
+## What happens if I close the window with unsaved anchors?
+
+If the title shows the `*` marker, closing the window (++ctrl+q++ or the X button) pops a **Save / Discard / Cancel** prompt:
+
+- **Save** opens the save dialog. A successful save closes the window; cancelling the dialog or hitting a write error keeps the window open with edits intact.
+- **Discard** closes the window and loses the edits.
+- **Cancel** keeps the window open.
+
+If there is no `*`, the window closes immediately. The same prompt appears before `File → Open…` swaps in another file.
+
 ## Can I move an anchor to a different time?
 
 Not directly. The Time (s) cell is read-only. To "move" an anchor:

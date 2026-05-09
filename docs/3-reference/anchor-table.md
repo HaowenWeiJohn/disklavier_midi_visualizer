@@ -144,7 +144,7 @@ Callers can mutate the returned list and the contained `Anchor` instances withou
 |---|---|
 | `add_requested()` | **Add Anchor** button clicked. The host (main window) reads the current playhead and calls `add_anchor_at`. |
 | `jump_requested(float)` | Time cell double-clicked. The host moves the playhead to that time. |
-| `anchors_changed()` | Anchor list mutated (add, delete, label edit, set_anchors, clear). The current implementation does not act on this signal — it's a hook for a future "dirty marker" feature. |
+| `anchors_changed()` | Anchor list mutated (add, delete, label edit, `set_anchors`, `clear`). The main window connects this to `_on_anchors_changed`, which sets `_dirty=True` and refreshes the title — see [Main window → Unsaved changes guard](main-window.md#unsaved-changes-guard). |
 
 ### Methods
 

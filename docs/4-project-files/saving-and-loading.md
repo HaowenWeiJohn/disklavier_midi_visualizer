@@ -24,7 +24,7 @@ For example, opening `C:\study\trial_001.mid` and pressing ++ctrl+s++ defaults t
 
 ### What gets written
 
-The save flow (`MainWindow._on_save_anchors` in `disklavier_visualizer/ui/main_window.py:233`):
+The save flow (`MainWindow._on_save_anchors` in `disklavier_visualizer/ui/main_window.py:298`):
 
 1. Read the current MIDI's adapter from the canvas.
 2. Build an `AnchorFile`:
@@ -32,6 +32,8 @@ The save flow (`MainWindow._on_save_anchors` in `disklavier_visualizer/ui/main_w
     - `midi_duration_seconds = adapter.duration` — used as a sanity check on reload.
     - `anchors = self._anchor_table.get_anchors()` — a defensive copy of the in-memory list.
 3. Call `save_anchors(anchor_file, path)`.
+
+`_on_save_anchors` returns `bool` — `True` if the file was written, `False` if the user cancelled the save dialog or the write raised `OSError`. The [unsaved-changes guard](../3-reference/main-window.md#unsaved-changes-guard) uses this return value to decide whether the action that triggered the save (a file open, a window close) may proceed.
 
 `save_anchors` (`disklavier_visualizer/io/anchor_io.py:38`):
 
