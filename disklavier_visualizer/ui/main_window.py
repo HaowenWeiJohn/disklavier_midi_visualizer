@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QCloseEvent, QKeySequence
 from PyQt5.QtWidgets import (
     QAction,
     QApplication,
@@ -39,7 +39,6 @@ HELP_HINT = (
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(DEFAULT_TITLE)
         self.resize(1400, 700)
 
         self._panel = MidiPanelWidget()
@@ -63,6 +62,10 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self._anchor_dock)
 
         self._current_midi_path: str | None = None
+        # Tracks unsaved anchor edits since the last save / load. The flag
+        # is flipped True by user-driven mutations (anchors_changed signal)
+        # and reset False after a successful save or any fresh load.
+        self._dirty: bool = False
 
         self._save_action: QAction | None = None
         self._build_menu()
@@ -76,7 +79,9 @@ class MainWindow(QMainWindow):
         # Anchor wiring.
         self._anchor_table.jump_requested.connect(self._panel.set_position)
         self._anchor_table.add_requested.connect(self._on_add_anchor)
+        self._anchor_table.anchors_changed.connect(self._on_anchors_changed)
 
+        self._update_title()
         self.statusBar().showMessage(HELP_HINT)
 
     def _build_menu(self):
@@ -114,9 +119,63 @@ class MainWindow(QMainWindow):
         shortcut("Shift+Right", lambda: self._panel.step_ticks(100))
         shortcut("A", self._on_add_anchor)
 
+    # ---- dirty-state tracking ----
+
+    def _on_anchors_changed(self) -> None:
+        """User-driven anchor mutation — mark dirty, refresh title.
+
+        Called for add/delete/label-edit. Loads use this same signal but
+        explicitly reset the flag afterwards via _mark_clean().
+        """
+        self._dirty = True
+        self._update_title()
+
+    def _mark_clean(self) -> None:
+        self._dirty = False
+        self._update_title()
+
+    def _update_title(self) -> None:
+        adapter = self._panel.canvas.adapter
+        if adapter is None:
+            self.setWindowTitle(DEFAULT_TITLE)
+            return
+        marker = "*" if self._dirty else ""
+        self.setWindowTitle(f"{adapter.filename}{marker} — {DEFAULT_TITLE}")
+
+    def _maybe_confirm_discard(self) -> bool:
+        """Return True if the caller may proceed; False if the user cancelled.
+
+        Prompts the user with Save / Discard / Cancel when there are unsaved
+        anchor edits. If the user picks Save and the save itself fails or the
+        user cancels the save dialog, treat that as cancel — keep the user
+        in the app rather than losing their anchors.
+        """
+        if not self._dirty:
+            return True
+        reply = QMessageBox.question(
+            self,
+            "Unsaved anchor changes",
+            "You have unsaved anchor changes. Save before continuing?",
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel,
+            QMessageBox.Save,
+        )
+        if reply == QMessageBox.Cancel:
+            return False
+        if reply == QMessageBox.Save:
+            return self._on_save_anchors()
+        return True  # Discard
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if self._maybe_confirm_discard():
+            event.accept()
+        else:
+            event.ignore()
+
     # ---- file open / dispatch ----
 
     def _on_open_file(self):
+        if not self._maybe_confirm_discard():
+            return
         path, _ = QFileDialog.getOpenFileName(
             self,
             "Open MIDI or Anchors",
@@ -151,12 +210,14 @@ class MainWindow(QMainWindow):
         self._slider.set_position(self._panel.current_time)
 
         self._current_midi_path = path
+        # clear() may emit anchors_changed (flipping _dirty true), so the
+        # _mark_clean() below MUST run after to settle the flag.
         self._anchor_table.clear()
         self._anchor_table.set_enabled_for_midi(True)
         if self._save_action is not None:
             self._save_action.setEnabled(True)
 
-        self.setWindowTitle(f"{adapter.filename} — {DEFAULT_TITLE}")
+        self._mark_clean()
         self.statusBar().showMessage(
             f"Loaded {adapter.filename}  |  {len(adapter.notes)} notes  |  "
             f"{adapter.duration:.2f}s   —   {HELP_HINT}"
@@ -213,7 +274,11 @@ class MainWindow(QMainWindow):
                 clipped += 1
                 t = max(0.0, min(t, adapter.duration))
             clamped.append(Anchor(timestamp_seconds=t, label=a.label))
+        # set_anchors() emits anchors_changed which flips _dirty true;
+        # _mark_clean() below resets it because the in-memory anchors now
+        # match the JSON we just loaded.
         self._anchor_table.set_anchors(clamped)
+        self._mark_clean()
 
         msg = (
             f"Loaded {adapter.filename}  +  {len(clamped)} anchors from "
@@ -230,10 +295,17 @@ class MainWindow(QMainWindow):
             return
         self._anchor_table.add_anchor_at(self._panel.current_time)
 
-    def _on_save_anchors(self) -> None:
+    def _on_save_anchors(self) -> bool:
+        """Save the current anchors. Returns True on success, False on cancel/failure.
+
+        The boolean lets _maybe_confirm_discard treat "user cancelled the
+        save dialog" or "write failed" as a cancellation of the original
+        action that prompted the save (open / close), rather than silently
+        losing the anchors.
+        """
         adapter = self._panel.canvas.adapter
         if adapter is None or self._current_midi_path is None:
-            return
+            return False
         default_dir = os.path.dirname(self._current_midi_path) or ""
         default_stem = os.path.splitext(adapter.filename)[0]
         default_name = f"{default_stem}.anchors.json"
@@ -244,7 +316,7 @@ class MainWindow(QMainWindow):
             "Anchor Files (*.json);;All Files (*)",
         )
         if not path:
-            return
+            return False
         anchor_file = AnchorFile(
             midi_path=os.path.abspath(self._current_midi_path),
             midi_duration_seconds=adapter.duration,
@@ -254,7 +326,9 @@ class MainWindow(QMainWindow):
             save_anchors(anchor_file, path)
         except OSError as e:
             QMessageBox.warning(self, "Could not save anchors", str(e))
-            return
+            return False
+        self._mark_clean()
         self.statusBar().showMessage(
             f"Saved {len(anchor_file.anchors)} anchors to {os.path.basename(path)}"
         )
+        return True

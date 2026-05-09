@@ -15,12 +15,20 @@ PROJECT_ROOT = Path(__file__).parent.parent
 SAMPLE_MIDI = PROJECT_ROOT / "data" / "20250814_140328_pia02_s044_002_slow_reaching.mid"
 
 
+def _suppress_unsaved_prompt(w):
+    """Clear _dirty just before pytest-qt closes the widget so the
+    unsaved-changes prompt does not pop a real modal dialog during
+    teardown (monkeypatches set in the test body are already reverted
+    by the time pytest_runtest_teardown closes widgets)."""
+    w._dirty = False
+
+
 @pytest.fixture
 def window(qtbot):
     if not SAMPLE_MIDI.exists():
         pytest.skip(f"Sample MIDI not present at {SAMPLE_MIDI}")
     w = MainWindow()
-    qtbot.addWidget(w)
+    qtbot.addWidget(w, before_close_func=_suppress_unsaved_prompt)
     return w
 
 
@@ -199,3 +207,158 @@ def test_open_anchors_user_cancels_picker(
     assert window._panel.canvas.adapter is not None
     assert [(a.timestamp_seconds, a.label) for a in window._anchor_table.get_anchors()] == \
         [(a.timestamp_seconds, a.label) for a in pre_anchors]
+
+
+# ---- unsaved-changes guard ----
+
+
+def test_fresh_window_is_not_dirty(window: MainWindow):
+    assert window._dirty is False
+
+
+def test_loading_midi_leaves_state_clean(window: MainWindow):
+    _load_sample(window)
+    assert window._dirty is False
+
+
+def test_adding_anchor_marks_dirty(window: MainWindow, qtbot):
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(3.0)
+    qtbot.wait(5)
+    assert window._dirty is True
+    # And the title gains a star.
+    assert window.windowTitle().startswith(SAMPLE_MIDI.name + "*")
+
+
+def test_editing_label_marks_dirty(window: MainWindow, qtbot):
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(3.0)
+    # Pretend a fresh save happened.
+    window._mark_clean()
+    assert window._dirty is False
+
+    table = window._anchor_table._table
+    table.item(0, 2).setText("renamed")
+    qtbot.wait(5)
+    assert window._dirty is True
+
+
+def test_deleting_anchor_marks_dirty(window: MainWindow, qtbot):
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(3.0)
+    window._mark_clean()
+    window._anchor_table._table.selectRow(0)
+    window._anchor_table._on_delete()
+    qtbot.wait(5)
+    assert window._dirty is True
+
+
+def test_loading_anchors_resets_dirty(window: MainWindow, qtbot, tmp_path):
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(2.0)  # dirties
+    json_path = tmp_path / "out.json"
+    save_anchors(
+        AnchorFile(
+            midi_path=str(SAMPLE_MIDI),
+            midi_duration_seconds=window._panel.canvas.adapter.duration,
+            anchors=[Anchor(timestamp_seconds=4.0, label="x")],
+        ),
+        str(json_path),
+    )
+    window._open_anchors(str(json_path))
+    qtbot.wait(5)
+    assert window._dirty is False
+    assert "*" not in window.windowTitle()
+
+
+def test_save_resets_dirty(window: MainWindow, qtbot, tmp_path, monkeypatch):
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(5.0)
+    assert window._dirty is True
+
+    target = tmp_path / "saved.json"
+    from PyQt5.QtWidgets import QFileDialog
+    monkeypatch.setattr(
+        QFileDialog, "getSaveFileName", lambda *a, **k: (str(target), "")
+    )
+    ok = window._on_save_anchors()
+    qtbot.wait(5)
+    assert ok is True
+    assert window._dirty is False
+    assert target.exists()
+
+
+def test_open_with_unsaved_prompts_and_cancels(
+    window: MainWindow, qtbot, monkeypatch
+):
+    """Cancelling the prompt aborts the open and preserves anchors."""
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(5.0)
+    pre = window._anchor_table.get_anchors()
+
+    from PyQt5.QtWidgets import QFileDialog, QMessageBox
+    file_dialog_calls = []
+    monkeypatch.setattr(
+        QMessageBox, "question", lambda *a, **k: QMessageBox.Cancel
+    )
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *a, **k: file_dialog_calls.append(True) or ("", ""),
+    )
+    window._on_open_file()
+    qtbot.wait(5)
+    # Cancel means we never reached the file picker.
+    assert file_dialog_calls == []
+    # Anchors intact.
+    assert [(a.timestamp_seconds, a.label) for a in window._anchor_table.get_anchors()] == \
+        [(a.timestamp_seconds, a.label) for a in pre]
+
+
+def test_open_with_unsaved_discard_proceeds(
+    window: MainWindow, qtbot, tmp_path, monkeypatch
+):
+    """Discard at the prompt loses the unsaved anchors and opens the new file."""
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(5.0)
+    assert window._dirty is True
+
+    from PyQt5.QtWidgets import QFileDialog, QMessageBox
+    monkeypatch.setattr(
+        QMessageBox, "question", lambda *a, **k: QMessageBox.Discard
+    )
+    monkeypatch.setattr(
+        QFileDialog, "getOpenFileName", lambda *a, **k: (str(SAMPLE_MIDI), "")
+    )
+    window._on_open_file()
+    qtbot.wait(5)
+    # Re-loaded MIDI; anchor table cleared; clean.
+    assert window._anchor_table.get_anchors() == []
+    assert window._dirty is False
+
+
+def test_close_with_unsaved_cancel_keeps_window_open(
+    window: MainWindow, qtbot, monkeypatch
+):
+    from PyQt5.QtGui import QCloseEvent
+    from PyQt5.QtWidgets import QMessageBox
+
+    _load_sample(window)
+    window._anchor_table.add_anchor_at(5.0)
+
+    monkeypatch.setattr(
+        QMessageBox, "question", lambda *a, **k: QMessageBox.Cancel
+    )
+    evt = QCloseEvent()
+    window.closeEvent(evt)
+    assert not evt.isAccepted()
+
+
+def test_close_when_clean_accepts_immediately(window: MainWindow, qtbot):
+    from PyQt5.QtGui import QCloseEvent
+
+    _load_sample(window)
+    # No edits → not dirty.
+    evt = QCloseEvent()
+    window.closeEvent(evt)
+    assert evt.isAccepted()
