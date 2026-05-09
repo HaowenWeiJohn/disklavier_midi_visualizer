@@ -1517,7 +1517,7 @@
 </code></pre></div>
 <p>For example, opening <code>C:\study\trial_001.mid</code> and pressing <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-s">S</kbd></span> defaults to <code>C:\study\trial_001.anchors.json</code>. You can pick any other path or filename, but <code>.anchors.json</code> is the conventional suffix.</p>
 <h3 id="what-gets-written">What gets written<a class="headerlink" href="#what-gets-written" title="Permanent link">&para;</a></h3>
-<p>The save flow (<code>MainWindow._on_save_anchors</code> in <code>disklavier_visualizer/ui/main_window.py:233</code>):</p>
+<p>The save flow (<code>MainWindow._on_save_anchors</code> in <code>disklavier_visualizer/ui/main_window.py:298</code>):</p>
 <ol>
 <li>Read the current MIDI's adapter from the canvas.</li>
 <li>Build an <code>AnchorFile</code>:<ul>
@@ -1528,6 +1528,7 @@
 </li>
 <li>Call <code>save_anchors(anchor_file, path)</code>.</li>
 </ol>
+<p><code>_on_save_anchors</code> returns <code>bool</code> — <code>True</code> if the file was written, <code>False</code> if the user cancelled the save dialog or the write raised <code>OSError</code>. The <a href="../../3-reference/main-window/#unsaved-changes-guard">unsaved-changes guard</a> uses this return value to decide whether the action that triggered the save (a file open, a window close) may proceed.</p>
 <p><code>save_anchors</code> (<code>disklavier_visualizer/io/anchor_io.py:38</code>):</p>
 <ol>
 <li>Sets <code>anchor_file.saved_at</code> to the current UTC time in ISO 8601 format.</li>

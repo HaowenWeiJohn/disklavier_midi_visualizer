@@ -1080,17 +1080,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#anchors-are-not-saved-automatically" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Anchors are not saved automatically
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#closing-the-anchor-dock-has-no-menu-item-to-reopen" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1271,17 +1260,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#anchors-are-not-saved-automatically" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Anchors are not saved automatically
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#closing-the-anchor-dock-has-no-menu-item-to-reopen" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1413,9 +1391,6 @@
 
 <h1 id="known-issues">Known issues<a class="headerlink" href="#known-issues" title="Permanent link">&para;</a></h1>
 <p>This page lists known limitations, behaviours that surprised early users, and things that aren't bugs but are worth being aware of. For an explicit list of features that are intentionally absent, see <a href="../../1-overview/scope-and-non-goals/">§1.2 Scope and non-goals</a>.</p>
-<h2 id="anchors-are-not-saved-automatically">Anchors are not saved automatically<a class="headerlink" href="#anchors-are-not-saved-automatically" title="Permanent link">&para;</a></h2>
-<p>Adding, deleting, or editing anchors in the dock does <strong>not</strong> mark the session dirty in any visible way (no asterisk in the title bar, no prompt before quitting). Closing the window with <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> or the X button discards unsaved anchors silently. Press <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-s">S</kbd></span> before quitting if you want to keep them.</p>
-<p>This is intentional — the app is single-purpose and lightweight, and a save-or-lose prompt was deemed more friction than value. If you find yourself losing work, treat <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-s">S</kbd></span> as a habit after every batch of anchors.</p>
 <h2 id="closing-the-anchor-dock-has-no-menu-item-to-reopen">Closing the anchor dock has no menu-item to reopen<a class="headerlink" href="#closing-the-anchor-dock-has-no-menu-item-to-reopen" title="Permanent link">&para;</a></h2>
 <p>The dock's title bar has a small <code>[X]</code> button that hides it. There is currently no <strong>View</strong> menu item or shortcut to bring it back. The workaround is to <strong>restart the app</strong> — every launch re-creates the dock in the right-side area regardless of how the previous session left it.</p>
 <p>Window geometry and dock state are deliberately not persisted (see <a href="../../4-project-files/saving-and-loading/#what-does-not-get-persisted">What does not get persisted</a>).</p>

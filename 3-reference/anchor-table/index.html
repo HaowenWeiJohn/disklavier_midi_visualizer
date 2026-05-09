@@ -1696,7 +1696,7 @@
 </tr>
 <tr>
 <td><code>anchors_changed()</code></td>
-<td>Anchor list mutated (add, delete, label edit, set_anchors, clear). The current implementation does not act on this signal — it's a hook for a future "dirty marker" feature.</td>
+<td>Anchor list mutated (add, delete, label edit, <code>set_anchors</code>, <code>clear</code>). The main window connects this to <code>_on_anchors_changed</code>, which sets <code>_dirty=True</code> and refreshes the title — see <a href="../main-window/#unsaved-changes-guard">Main window → Unsaved changes guard</a>.</td>
 </tr>
 </tbody>
 </table>

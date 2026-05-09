@@ -1172,6 +1172,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-does-the-in-the-title-bar-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does the * in the title bar mean?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-if-i-close-the-window-with-unsaved-anchors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if I close the window with unsaved anchors?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#can-i-move-an-anchor-to-a-different-time" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1357,6 +1379,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-does-the-in-the-title-bar-mean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What does the * in the title bar mean?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-if-i-close-the-window-with-unsaved-anchors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens if I close the window with unsaved anchors?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#can-i-move-an-anchor-to-a-different-time" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1474,6 +1518,16 @@
 <p>To start at zero anyway, drag the slider thumb to the left edge or click the leftmost part of the slider trough.</p>
 <h2 id="why-does-my-zoom-reset-every-time-i-open-a-file">Why does my zoom reset every time I open a file?<a class="headerlink" href="#why-does-my-zoom-reset-every-time-i-open-a-file" title="Permanent link">&para;</a></h2>
 <p>By design — <code>load_midi</code> resets <code>_seconds_per_viewport</code> to 5.0 on every load. The thinking is that "5 seconds visible" is a reasonable default for spotting note shapes, and if you had previously zoomed in for the prior file, that zoom level isn't necessarily appropriate for the new one.</p>
+<h2 id="what-does-the-in-the-title-bar-mean">What does the <code>*</code> in the title bar mean?<a class="headerlink" href="#what-does-the-in-the-title-bar-mean" title="Permanent link">&para;</a></h2>
+<p>It marks <strong>unsaved anchor edits</strong>. The title shows <code>{filename}* — Disklavier MIDI Visualizer</code> as soon as you add, delete, or rename an anchor, and reverts to <code>{filename} — Disklavier MIDI Visualizer</code> (no star) after a successful <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-s">S</kbd></span> save or any fresh load. See <a href="../../3-reference/main-window/#unsaved-changes-guard">§3.1 Main window → Unsaved changes guard</a>.</p>
+<h2 id="what-happens-if-i-close-the-window-with-unsaved-anchors">What happens if I close the window with unsaved anchors?<a class="headerlink" href="#what-happens-if-i-close-the-window-with-unsaved-anchors" title="Permanent link">&para;</a></h2>
+<p>If the title shows the <code>*</code> marker, closing the window (<span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> or the X button) pops a <strong>Save / Discard / Cancel</strong> prompt:</p>
+<ul>
+<li><strong>Save</strong> opens the save dialog. A successful save closes the window; cancelling the dialog or hitting a write error keeps the window open with edits intact.</li>
+<li><strong>Discard</strong> closes the window and loses the edits.</li>
+<li><strong>Cancel</strong> keeps the window open.</li>
+</ul>
+<p>If there is no <code>*</code>, the window closes immediately. The same prompt appears before <code>File → Open…</code> swaps in another file.</p>
 <h2 id="can-i-move-an-anchor-to-a-different-time">Can I move an anchor to a different time?<a class="headerlink" href="#can-i-move-an-anchor-to-a-different-time" title="Permanent link">&para;</a></h2>
 <p>Not directly. The Time (s) cell is read-only. To "move" an anchor:</p>
 <ul>

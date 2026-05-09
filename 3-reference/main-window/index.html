@@ -832,6 +832,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#unsaved-changes-guard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsaved changes guard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Unsaved changes guard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-the-flag-flips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When the flag flips
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save-discard-cancel-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Save / Discard / Cancel prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#two-way-bind-canvas-slider" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1337,6 +1376,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#unsaved-changes-guard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsaved changes guard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Unsaved changes guard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-the-flag-flips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When the flag flips
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save-discard-cancel-prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Save / Discard / Cancel prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#two-way-bind-canvas-slider" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1439,7 +1517,7 @@
 </code></pre></div>
 <p>The central widget is a <code>QVBoxLayout</code> containing the <code>MidiPanelWidget</code> (stretch=1) on top and the <code>TimelineSliderWidget</code> below. The anchor dock is a <code>QDockWidget</code> floated to <code>Qt.RightDockWidgetArea</code> and may be moved to either side or undocked entirely.</p>
 <h2 id="title-bar">Title bar<a class="headerlink" href="#title-bar" title="Permanent link">&para;</a></h2>
-<p>Two states only:</p>
+<p>Three states:</p>
 <table>
 <thead>
 <tr>
@@ -1454,11 +1532,15 @@
 </tr>
 <tr>
 <td><code>{filename} — Disklavier MIDI Visualizer</code></td>
-<td>MIDI loaded</td>
+<td>MIDI loaded; no unsaved anchor edits</td>
+</tr>
+<tr>
+<td><code>{filename}* — Disklavier MIDI Visualizer</code></td>
+<td>MIDI loaded; anchors edited since the last save / load</td>
 </tr>
 </tbody>
 </table>
-<p>There is <strong>no dirty marker</strong> for unsaved anchors. Closing the window with unsaved anchors discards them silently — the user is responsible for pressing <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-s">S</kbd></span> before quitting.</p>
+<p>The trailing <code>*</code> is the <strong>dirty marker</strong>. See <a href="#unsaved-changes-guard">Unsaved changes guard</a> for what triggers it and what protections it enables.</p>
 <h2 id="status-bar">Status bar<a class="headerlink" href="#status-bar" title="Permanent link">&para;</a></h2>
 <p>Always shows a help-hint string after <code>—</code>:</p>
 <div class="highlight"><pre><span></span><code>Drag canvas to scrub  |  Scroll to zoom  |  Arrows to step  |  Double-click a note to seek  |  A to add anchor
@@ -1519,7 +1601,7 @@
 <tr>
 <td><strong>Quit</strong></td>
 <td><span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span></td>
-<td>Closes the window. <strong>Does not</strong> prompt to save unsaved anchors.</td>
+<td>Closes the window. If there are unsaved anchor edits, prompts <strong>Save / Discard / Cancel</strong> first — see <a href="#unsaved-changes-guard">Unsaved changes guard</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -1544,6 +1626,64 @@
 <li>Replace the table contents with the clamped anchors and update the status bar.</li>
 </ol>
 <p>See <a href="../../4-project-files/saving-and-loading/">§4.1 Saving and loading anchors</a> for the full workflow including edge cases.</p>
+<h2 id="unsaved-changes-guard">Unsaved changes guard<a class="headerlink" href="#unsaved-changes-guard" title="Permanent link">&para;</a></h2>
+<p>The main window tracks whether the in-memory anchor list differs from the last save (or last fresh load) via a <code>_dirty</code> boolean (<code>disklavier_visualizer/ui/main_window.py:68</code>). The flag is the source of truth for both the title-bar <code>*</code> marker and a confirmation prompt that fires before any action that would lose the edits.</p>
+<h3 id="when-the-flag-flips">When the flag flips<a class="headerlink" href="#when-the-flag-flips" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>New <code>_dirty</code></th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add anchor (<span class="keys"><kbd class="key-a">A</kbd></span> or <strong>Add Anchor</strong>)</td>
+<td><code>True</code></td>
+<td><code>_on_anchors_changed</code> ← <code>AnchorTableWidget.anchors_changed</code></td>
+</tr>
+<tr>
+<td>Delete anchor</td>
+<td><code>True</code></td>
+<td>same signal</td>
+</tr>
+<tr>
+<td>Edit a label to a new value</td>
+<td><code>True</code></td>
+<td>same signal</td>
+</tr>
+<tr>
+<td><span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-s">S</kbd></span> save succeeds</td>
+<td><code>False</code></td>
+<td><code>_mark_clean()</code> at the end of <code>_on_save_anchors</code></td>
+</tr>
+<tr>
+<td><code>File → Open…</code> loads a MIDI</td>
+<td><code>False</code></td>
+<td><code>_mark_clean()</code> at the end of <code>_open_midi</code></td>
+</tr>
+<tr>
+<td><code>File → Open…</code> loads an anchor JSON</td>
+<td><code>False</code></td>
+<td><code>_mark_clean()</code> at the end of <code>_open_anchors</code></td>
+</tr>
+</tbody>
+</table>
+<p>Loads call <code>_anchor_table.clear()</code> / <code>set_anchors(...)</code> first, both of which themselves emit <code>anchors_changed</code> (and would set <code>_dirty=True</code>). The <code>_mark_clean()</code> call deliberately runs <em>after</em> the mutation to settle the flag back to <code>False</code>.</p>
+<h3 id="save-discard-cancel-prompt">Save / Discard / Cancel prompt<a class="headerlink" href="#save-discard-cancel-prompt" title="Permanent link">&para;</a></h3>
+<p><code>_maybe_confirm_discard()</code> (<code>disklavier_visualizer/ui/main_window.py:145</code>) is invoked from two call sites that would otherwise lose anchors:</p>
+<ul>
+<li><code>_on_open_file</code> — before showing the file picker. Cancelling aborts the open.</li>
+<li><code>closeEvent</code> — before accepting the close. Cancelling keeps the window alive.</li>
+</ul>
+<p>When <code>_dirty</code> is <code>True</code>, a <code>QMessageBox.question</code> with three buttons appears:</p>
+<ul>
+<li><strong>Save</strong> — chains into <code>_on_save_anchors</code>. The save dialog appears; if the user picks a path and the write succeeds, the original action proceeds. If the user cancels the save dialog or the write raises <code>OSError</code>, the original action is <strong>aborted</strong> (treated as Cancel) — anchors are preserved rather than silently discarded.</li>
+<li><strong>Discard</strong> — proceed without saving. The unsaved edits are lost.</li>
+<li><strong>Cancel</strong> — abort. The window stays open / the file picker never appears.</li>
+</ul>
+<p>If <code>_dirty</code> is <code>False</code>, the prompt is skipped and the action proceeds immediately.</p>
 <h2 id="two-way-bind-canvas-slider">Two-way bind: canvas ↔ slider<a class="headerlink" href="#two-way-bind-canvas-slider" title="Permanent link">&para;</a></h2>
 <p>The canvas (<code>MidiPanelWidget</code>) and the slider (<code>TimelineSliderWidget</code>) both expose:</p>
 <ul>

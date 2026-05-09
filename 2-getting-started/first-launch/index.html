@@ -1414,7 +1414,13 @@
 <p>If the referenced MIDI has been moved or renamed, a warning appears and a second file dialog opens so you can locate the file. Cancelling that dialog aborts the load and leaves the previous session (if any) intact.</p>
 <p>If the loaded MIDI's duration differs from the value stored at save time by more than 0.01 seconds, a warning notes the mismatch. Anchors whose timestamps fall outside the new duration range are clamped, and the status bar reports the clamp count.</p>
 <h2 id="quit">Quit<a class="headerlink" href="#quit" title="Permanent link">&para;</a></h2>
-<p><span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> closes the window. There is no "save before quit" prompt — anchors that haven't been saved are lost. If you want to keep them, save first.</p>
+<p><span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-q">Q</kbd></span> (or the window's <strong>X</strong> button) closes the window. If you have unsaved anchor edits — the title bar shows a <code>*</code> marker — a <strong>Save / Discard / Cancel</strong> prompt appears first:</p>
+<ul>
+<li><strong>Save</strong> opens the save dialog; succeeding closes the window, cancelling the dialog keeps it open.</li>
+<li><strong>Discard</strong> closes the window and loses the edits.</li>
+<li><strong>Cancel</strong> keeps the window open with edits intact.</li>
+</ul>
+<p>If there are no unsaved edits, the window closes immediately. See <a href="../../3-reference/main-window/#unsaved-changes-guard">§3.1 Main window → Unsaved changes guard</a> for the full flow.</p>
 <h2 id="where-to-next">Where to next<a class="headerlink" href="#where-to-next" title="Permanent link">&para;</a></h2>
 <ul>
 <li>For a full walkthrough of every UI element and signal, head to <a href="../../3-reference/main-window/">§3 Reference → Main window</a>.</li>
